@@ -1,41 +1,28 @@
 <template>
-  <div class="profile-page">
-    <div class="user-info">
+  <div class="home-page">
+    <div class="banner">
       <div class="container">
-        <div class="row">
-          <div class="col-xs-12 col-md-10 offset-md-1">
-            <img src="http://i.imgur.com/Qr71crq.jpg" class="user-img" />
-            <h4>Eric Simons</h4>
-            <p>Cofounder @GoThinkster, lived in Aol's HQ for a few months, kinda looks like Peeta from the Hunger Games</p>
-            <button class="btn btn-sm btn-outline-secondary action-btn">
-              <i class="ion-plus-round"></i>
-              &nbsp;
-              Follow Eric Simons
-            </button>
-          </div>
-        </div>
+        <h1 class="logo-font">conduit</h1>
+        <p>A place to share your knowledge.</p>
       </div>
     </div>
 
-    <div class="container">
+    <div class="container page">
       <div class="row">
-        <div class="col-xs-12 col-md-10 offset-md-1">
-          <div class="articles-toggle">
+        <div class="col-md-9">
+          <div class="feed-toggle">
             <ul class="nav nav-pills outline-active">
               <li class="nav-item">
-                <a class="nav-link active" href>My Articles</a>
+                <a class="nav-link disabled" href>Your Feed</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href>Favorited Articles</a>
+                <a class="nav-link active" href>Global Feed</a>
               </li>
             </ul>
           </div>
-
           <div class="article-preview">
             <div class="article-meta">
-              <a href>
-                <img src="http://i.imgur.com/Qr71crq.jpg" />
-              </a>
+              <nuxt-link to="profile"><img src="http://i.imgur.com/Qr71crq.jpg" /></nuxt-link>
               <div class="info">
                 <a href class="author">Eric Simons</a>
                 <span class="date">January 20th</span>
@@ -53,7 +40,7 @@
 
           <div class="article-preview">
             <div class="article-meta">
-              <a href>
+              <a href="profile.html">
                 <img src="http://i.imgur.com/N4VcUeJ.jpg" />
               </a>
               <div class="info">
@@ -68,11 +55,24 @@
               <h1>The song you won't ever stop singing. No matter how hard you try.</h1>
               <p>This is the description for the post.</p>
               <span>Read more...</span>
-              <ul class="tag-list">
-                <li class="tag-default tag-pill tag-outline">Music</li>
-                <li class="tag-default tag-pill tag-outline">Song</li>
-              </ul>
             </a>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="sidebar">
+            <p>Popular Tags</p>
+
+            <div class="tag-list">
+              <a href class="tag-pill tag-default">programming</a>
+              <a href class="tag-pill tag-default">javascript</a>
+              <a href class="tag-pill tag-default">emberjs</a>
+              <a href class="tag-pill tag-default">angularjs</a>
+              <a href class="tag-pill tag-default">react</a>
+              <a href class="tag-pill tag-default">mean</a>
+              <a href class="tag-pill tag-default">node</a>
+              <a href class="tag-pill tag-default">rails</a>
+            </div>
           </div>
         </div>
       </div>
@@ -82,7 +82,7 @@
 
 <script>
 export default {
-  name: "ProfilePage",
+  name: "HomePage",
 };
 </script>
 

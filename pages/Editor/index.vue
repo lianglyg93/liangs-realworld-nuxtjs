@@ -34,6 +34,7 @@
 <script>
 export default {
   name: "EditArticlePage",
+  middleware: 'authenticated'
 };
 </script>
 
