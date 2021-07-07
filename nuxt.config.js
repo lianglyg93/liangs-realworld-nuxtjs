@@ -2,7 +2,7 @@
  * @Author: liangs
  * @Date: 2021-07-02 18:25:13
  * @LastEditors: liangs
- * @LastEditTime: 2021-07-05 14:18:27
+ * @LastEditTime: 2021-07-07 18:49:23
  * @Description: file content
  */
 export default {
@@ -57,4 +57,5 @@ export default {
       );
     },
   },
+  plugins: ['~/plugins/request.js','~/plugins/filter.js']
 };
