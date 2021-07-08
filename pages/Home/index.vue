@@ -18,7 +18,8 @@
                   :to="{ name: 'home', query: { tab: 'your' } }"
                   :class="{ active: tab === 'your' }"
                   exact
-                >Your Feed</nuxt-link>
+                  >Your Feed</nuxt-link
+                >
               </li>
               <li class="nav-item">
                 <nuxt-link
@@ -26,57 +27,20 @@
                   :to="{ name: 'home', query: { tab: 'global' } }"
                   :class="{ active: tab === 'global' }"
                   exact
-                >Global Feed</nuxt-link>
+                  >Global Feed</nuxt-link
+                >
               </li>
               <li class="nav-item" v-if="tag">
-                <span class="nav-link" :class="{ active: tag }" exact># {{ tag }}</span>
+                <span class="nav-link" :class="{ active: tag }" exact
+                  ># {{ tag }}</span
+                >
               </li>
             </ul>
           </div>
           <!-- 文章列表 -->
-          <div class="article-preview" v-for="article in articles" :key="article.slug">
-            <div class="article-meta">
-              <nuxt-link
-                :to="{
-                  name: 'profile',
-                  params: { username: article.author.username },
-                }"
-              >
-                <img :src="article.author.image" />
-              </nuxt-link>
-              <div class="info">
-                <nuxt-link
-                  :to="{
-                    name: 'profile',
-                    params: { username: article.author.username },
-                  }"
-                  class="author"
-                >
-                  {{ article.author.username }}
-                  <span class="date">{{ article.createdAt | handleDay}}</span>
-                </nuxt-link>
-              </div>
-              <button
-                class="btn btn-outline-primary btn-sm pull-xs-right"
-                :class="{ active: article.favorited }"
-                @click="favoritedActive(article)"
-                :disabled="article.disableFavorited"
-              >
-                <i class="ion-heart"></i>
-                {{ article.favoritesCount }}
-              </button>
-            </div>
-            <nuxt-link
-              class="preview-link"
-              :to="{ name: 'article', params: { slug: article.slug } }"
-            >
-              <h1>{{ article.title }}</h1>
-              <p>{{ article.body }}</p>
-              <span>Read more...</span>
-            </nuxt-link>
-          </div>
+          <article-preview :articles="articles" />
           <!-- 分页 -->
-          <nav>
+          <nav v-if="totolPage > 1">
             <ul class="pagination">
               <li
                 class="page-item"
@@ -87,7 +51,8 @@
                 <nuxt-link
                   class="page-link"
                   :to="{ name: 'home', query: { page: pageIndex } }"
-                >{{ pageIndex }}</nuxt-link>
+                  >{{ pageIndex }}</nuxt-link
+                >
               </li>
             </ul>
           </nav>
@@ -102,8 +67,9 @@
                 v-for="(tagItem, index) in tagList"
                 :key="tagItem + index"
                 class="tag-pill tag-default"
-                :to="{ name: 'home', query: { tag: tagItem , tab: 'tag' } }"
-              >{{ tagItem }}</nuxt-link>
+                :to="{ name: 'home', query: { tag: tagItem, tab: 'tag' } }"
+                >{{ tagItem }}</nuxt-link
+              >
             </div>
           </div>
         </div>
@@ -113,17 +79,15 @@
 </template>
 
 <script>
-import {
-  getArticles,
-  getFeedArticles,
-  getTags,
-  favoriteArticle,
-  unFavoriteArticle,
-} from "@/api/article";
+import { getArticles, getFeedArticles, getTags } from "@/api/article";
 import { mapState } from "vuex";
+import articlePreview from "@/components/article-preview";
 export default {
   name: "HomePage",
   watchQuery: ["page", "tab", "tag"],
+  components: {
+    articlePreview,
+  },
   /** 发起请求 */
   async asyncData({ query, store }) {
     const limit = 20; //一页多少条
@@ -141,7 +105,7 @@ export default {
       getTags(),
     ]);
     const { articles, articlesCount } = articleRes.data;
-    console.log(articles);
+    // console.log(articles);
     articles.forEach((articleItem) => {
       articleItem.disableFavorited = false;
     });
@@ -159,24 +123,6 @@ export default {
     ...mapState(["userInfo"]),
     totolPage() {
       return Math.ceil(this.articlesCount / this.limit);
-    },
-  },
-  methods: {
-    // 取消或者点赞
-    async favoritedActive(article) {
-      const { slug, favorited } = article;
-      article.disableFavorited = true;
-      if (article.favorited) {
-        //点过赞取消赞
-        await unFavoriteArticle(slug);
-        article.favorited = false;
-        article.favoritesCount -= 1;
-      } else {
-        await favoriteArticle(slug);
-        article.favorited = true;
-        article.favoritesCount += 1;
-      }
-      article.disableFavorited = false;
     },
   },
 };

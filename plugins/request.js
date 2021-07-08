@@ -4,7 +4,7 @@ export const request = axios.create({
   baseURL: "https://conduit.productionready.io",
 });
 
-export default ({ store }) => {
+export default ({ store, redirect }) => {
   request.interceptors.request.use(
     function(config) {
       // Do something before request is sent
@@ -14,9 +14,19 @@ export default ({ store }) => {
       }
       return config;
     },
-    function(error) {
+    function(errMsg) {
       // Do something with request error
-      return Promise.reject(error);
+      return Promise.reject(errMsg);
+    }
+  );
+  request.interceptors.response.use(
+    function(response) {
+      // Do something with response data
+      return response;
+    },
+    function(errMsg) {
+      redirect("/sorry");
+      return Promise.reject(400,errMsg);
     }
   );
 };

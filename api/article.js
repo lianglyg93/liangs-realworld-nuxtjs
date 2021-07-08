@@ -45,6 +45,30 @@ export const getSlugArticle = (slug) => {
     url: `/api/articles/${slug}`,
   });
 };
+// 创建文章
+export const createArticles = (data) => {
+  return request({
+    method: "POST",
+    url: "/api/articles",
+    data,
+  });
+};
+// 修改文章
+export const updateArticles = (slug,data) => {
+  return request({
+    method: "PUT",
+    url: `/api/articles/${slug}`,
+    data,
+  });
+};
+// 删除文章
+export const deleteArticles = (slug,data) => {
+  return request({
+    method: "DELETE",
+    url: `/api/articles/${slug}`,
+    data,
+  });
+};
 
 // 获取文章评论
 export const getComments = (slug) => {
@@ -68,21 +92,5 @@ export const deleteComment = (slug, id) => {
   return request({
     method: "DELETE",
     url: `/api/articles/${slug}/comments/${id}`,
-  });
-};
-
-// 关注作者
-export const followUser = (username) => {
-  return request({
-    method: "POST",
-    url: `/api/profiles/${username}/follow`,
-  });
-};
-
-// 取消关注作者
-export const unFollowUser = (username) => {
-  return request({
-    method: "DELETE",
-    url: `/api/profiles/${username}/follow`,
   });
 };

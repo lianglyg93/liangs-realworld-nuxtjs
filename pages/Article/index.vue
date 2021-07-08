@@ -1,10 +1,3 @@
-<!--
- * @Author: liangs
- * @Date: 2021-07-05 10:57:53
- * @LastEditors: liangs
- * @LastEditTime: 2021-07-07 22:28:17
- * @Description: file content
--->
 <template>
   <div class="article-page">
     <div class="banner">
@@ -12,9 +5,11 @@
         <h1>{{ article.title }}</h1>
 
         <article-meta
+          :isUserArticle="isUserArticle"
           :article="article"
           @toFollowUser="toFollowUser"
           @favoritedActive="favoritedActive"
+          @deleteArticle="deleteArticle"
         />
       </div>
     </div>
@@ -24,13 +19,25 @@
         <div class="col-md-12" v-html="article.body"></div>
       </div>
 
+      <ul class="tag-list">
+        <li
+          class="tag-default tag-pill tag-outline"
+          v-for="(tagItem, tagIndex) in article.tagList"
+          :key="tagItem + tagIndex"
+        >
+          {{ tagItem }}
+        </li>
+      </ul>
+
       <hr />
 
       <div class="article-actions">
         <article-meta
+          :isUserArticle="isUserArticle"
           :article="article"
           @toFollowUser="toFollowUser"
           @favoritedActive="favoritedActive"
+          @deleteArticle="deleteArticle"
         />
       </div>
 
@@ -106,11 +113,11 @@ import {
   getComments,
   addComment,
   deleteComment,
-  followUser,
-  unFollowUser,
   favoriteArticle,
   unFavoriteArticle,
+  deleteArticles,
 } from "@/api/article";
+import { followUser, unFollowUser } from "@/api/profiles";
 import { mapState } from "vuex";
 import markdownIt from "markdown-it";
 export default {
@@ -135,7 +142,7 @@ export default {
   },
   head() {
     return {
-      title: `${this.article.title} - realWorld` ,
+      title: `${this.article.title} - realWorld`,
       meta: [
         {
           hid: "description",
@@ -150,6 +157,10 @@ export default {
   },
   computed: {
     ...mapState(["userInfo"]),
+    /** 是否作者本人 */
+    isUserArticle() {
+      return this.userInfo?.username === this.article?.author?.username;
+    },
   },
   mounted() {
     this.queryComments();
@@ -184,7 +195,7 @@ export default {
       const { data } = author.following
         ? await unFollowUser(author.username)
         : await followUser(author.username);
-      console.log(data);
+      // console.log(data);
       this.article.author.following = data.profile.following;
       this.article.disableBtn = false;
     },
@@ -192,7 +203,7 @@ export default {
     async favoritedActive() {
       const { slug, favorited } = this.article;
       this.article.disableBtn = true;
-      console.log(this.article);
+      // console.log(this.article);
       const { data } = favorited
         ? await unFavoriteArticle(slug)
         : await favoriteArticle(slug);
@@ -200,6 +211,13 @@ export default {
       this.article.favorited = data.article.favorited;
       this.article.favoritesCount = data.article.favoritesCount;
       this.article.disableBtn = false;
+    },
+    //删除文章
+    async deleteArticle() {
+      const { data } = await deleteArticles(this.slug);
+      this.$router.push({
+        name: "home",
+      });
     },
   },
 };

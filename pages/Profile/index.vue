@@ -1,16 +1,25 @@
 <template>
-  <div class="profile-page">
+  <div class="profile-page" v-if="profile">
     <div class="user-info">
       <div class="container">
         <div class="row">
           <div class="col-xs-12 col-md-10 offset-md-1">
-            <img src="http://i.imgur.com/Qr71crq.jpg" class="user-img" />
-            <h4>Eric Simons</h4>
-            <p>Cofounder @GoThinkster, lived in Aol's HQ for a few months, kinda looks like Peeta from the Hunger Games</p>
-            <button class="btn btn-sm btn-outline-secondary action-btn">
-              <i class="ion-plus-round"></i>
+            <img :src="profile.image" class="user-img" />
+            <h4>{{ profile.username }}</h4>
+            <p>{{ profile.bio }}</p>
+            <button
+              class="btn btn-sm btn-outline-secondary action-btn"
+              @click="clickBtn"
+            >
+              <i :class="isUser ? 'ion-gear-a' : 'ion-plus-round'"></i>
               &nbsp;
-              Follow Eric Simons
+              {{
+                isUser
+                  ? " Edit Profile Settings"
+                  : profile.following
+                  ? "unfollow Eric Simons"
+                  : "Follow Eric Simons"
+              }}
             </button>
           </div>
         </div>
@@ -23,57 +32,47 @@
           <div class="articles-toggle">
             <ul class="nav nav-pills outline-active">
               <li class="nav-item">
-                <a class="nav-link active" href>My Articles</a>
+                <nuxt-link
+                  exact
+                  class="nav-link"
+                  :class="{ active: tab === 'my' }"
+                  :to="{ name: 'profile', query: { tab: 'my' } }"
+                  >My Articles</nuxt-link
+                >
               </li>
               <li class="nav-item">
-                <a class="nav-link" href>Favorited Articles</a>
+                <nuxt-link
+                  exact
+                  class="nav-link"
+                  :class="{ active: tab === 'favorited' }"
+                  :to="{
+                    name: 'profile',
+                    query: { tab: 'favorited' },
+                  }"
+                  >Favorited Articles</nuxt-link
+                >
               </li>
             </ul>
           </div>
 
-          <div class="article-preview">
-            <div class="article-meta">
-              <a href>
-                <img src="http://i.imgur.com/Qr71crq.jpg" />
-              </a>
-              <div class="info">
-                <a href class="author">Eric Simons</a>
-                <span class="date">January 20th</span>
-              </div>
-              <button class="btn btn-outline-primary btn-sm pull-xs-right">
-                <i class="ion-heart"></i> 29
-              </button>
-            </div>
-            <a href class="preview-link">
-              <h1>How to build webapps that scale</h1>
-              <p>This is the description for the post.</p>
-              <span>Read more...</span>
-            </a>
-          </div>
-
-          <div class="article-preview">
-            <div class="article-meta">
-              <a href>
-                <img src="http://i.imgur.com/N4VcUeJ.jpg" />
-              </a>
-              <div class="info">
-                <a href class="author">Albert Pai</a>
-                <span class="date">January 20th</span>
-              </div>
-              <button class="btn btn-outline-primary btn-sm pull-xs-right">
-                <i class="ion-heart"></i> 32
-              </button>
-            </div>
-            <a href class="preview-link">
-              <h1>The song you won't ever stop singing. No matter how hard you try.</h1>
-              <p>This is the description for the post.</p>
-              <span>Read more...</span>
-              <ul class="tag-list">
-                <li class="tag-default tag-pill tag-outline">Music</li>
-                <li class="tag-default tag-pill tag-outline">Song</li>
-              </ul>
-            </a>
-          </div>
+          <article-preview :articles="articles" />
+          <!-- 分页 -->
+          <nav v-if="totolPage > 1">
+            <ul class="pagination">
+              <li
+                class="page-item"
+                :class="{ active: pageIndex === page }"
+                v-for="pageIndex in totolPage"
+                :key="pageIndex"
+              >
+                <nuxt-link
+                  class="page-link"
+                  :to="{ name: 'profile', query: { page: pageIndex, tab } }"
+                  >{{ pageIndex }}</nuxt-link
+                >
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </div>
@@ -81,11 +80,82 @@
 </template>
 
 <script>
+import { getProfile, followUser, unFollowUser } from "@/api/profiles";
+import { getArticles } from "@/api/article";
+import { mapState } from "vuex";
+import articlePreview from "@/components/article-preview";
 export default {
   name: "ProfilePage",
-  middleware: 'authenticated'
+  middleware: "authenticated",
+  components: {
+    articlePreview,
+  },
+  watchQuery: ["page", "tab"],
+  /** 发起请求 */
+  async asyncData({ query, params }) {
+    const { username } = params;
+    const limit = 5; //一页多少条
+    const page = parseInt(query.page || 1); //当前第几页
+
+    const queryParam =
+      query.tab === "favorited"
+        ? { favorited: username }
+        : { author: username };
+    const [articleRes, profileRes] = await Promise.all([
+      getArticles({
+        limit,
+        offset: (page - 1) * limit,
+        ...queryParam,
+      }),
+      getProfile(username),
+    ]);
+    const { articles, articlesCount } = articleRes.data;
+    const { profile } = profileRes.data;
+    articles.forEach((articleItem) => {
+      articleItem.disableFavorited = false;
+    });
+    return {
+      articles,
+      articlesCount,
+      page,
+      limit,
+      username,
+      profile,
+      tab: query.tab || "my",
+    };
+  },
+  data() {
+    return {
+      profile: {},
+    };
+  },
+  computed: {
+    ...mapState(["userInfo"]),
+    /** 是否本人 */
+    isUser() {
+      return this.userInfo?.username === this.profile?.username;
+    },
+
+    totolPage() {
+      return Math.ceil(this.articlesCount / this.limit);
+    },
+  },
+  methods: {
+    async clickBtn() {
+      if (this.isUser) {
+        this.$router.push({
+          name: "settings",
+        });
+      } else {
+        const { username, following } = this.profile;
+        const { data } = following
+          ? await unFollowUser(username)
+          : await followUser(username);
+        this.profile = data.profile;
+      }
+    },
+  },
 };
 </script>
 
-<style>
-</style>
+<style></style>

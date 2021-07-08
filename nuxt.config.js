@@ -2,12 +2,15 @@
  * @Author: liangs
  * @Date: 2021-07-02 18:25:13
  * @LastEditors: liangs
- * @LastEditTime: 2021-07-07 18:49:23
+ * @LastEditTime: 2021-07-08 18:09:45
  * @Description: file content
  */
 export default {
+  head: {
+    title: "realWorld",
+  },
   router: {
-    linkActiveClass: 'active',
+    linkActiveClass: "active",
     extendRoutes(routes, resolve) {
       routes.splice(0);
       routes.push(
@@ -51,11 +54,17 @@ export default {
                 name: "article",
                 component: resolve(__dirname, "pages/Article"),
               },
+              {
+                name: "404",
+                path: "*",
+                component: resolve(__dirname, "pages/Error/"),
+              },
             ],
           },
         ]
       );
     },
   },
-  plugins: ['~/plugins/request.js','~/plugins/filter.js']
+  plugins: ["~/plugins/request.js", "~/plugins/filter.js"],
+  loading: "~/components/loading.vue",
 };

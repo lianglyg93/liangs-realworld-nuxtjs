@@ -3,7 +3,9 @@
     <div class="container page">
       <div class="row">
         <div class="col-md-6 offset-md-3 col-xs-12">
-          <h1 class="text-xs-center">{{isLoginPage ? 'Sign in' :'Sign up'}}</h1>
+          <h1 class="text-xs-center">
+            {{ isLoginPage ? "Sign in" : "Sign up" }}
+          </h1>
           <p class="text-xs-center" v-if="isLoginPage">
             <nuxt-link to="register">Need an account?</nuxt-link>
           </p>
@@ -11,9 +13,11 @@
             <nuxt-link to="login">Have an account?</nuxt-link>
           </p>
 
-          <ul class="error-messages" v-if="Object.keys(errors).length>0">
+          <ul class="error-messages" v-if="Object.keys(errors).length > 0">
             <template v-for="(messages, field) in errors">
-              <li v-for="message in messages" :key="field+message">{{field}} {{message}}</li>
+              <li v-for="message in messages" :key="field + message">
+                {{ field }} {{ message }}
+              </li>
             </template>
           </ul>
 
@@ -46,9 +50,9 @@
                 minlength="8"
               />
             </fieldset>
-            <button
-              class="btn btn-lg btn-primary pull-xs-right"
-            >{{isLoginPage ? 'Sign in' :'Sign up'}}</button>
+            <button class="btn btn-lg btn-primary pull-xs-right">
+              {{ isLoginPage ? "Sign in" : "Sign up" }}
+            </button>
           </form>
         </div>
       </div>
@@ -72,8 +76,8 @@ export default {
     return {
       user: {
         username: "",
-        email: "747726748@qq.com",
-        password: "liangshuang1993",
+        email: "",
+        password: "",
       },
       errors: {},
     };
@@ -88,8 +92,12 @@ export default {
           : await register({
               user: this.user,
             });
-        this.$store.commit("setUserInfo", data.user);
-        Cookie.set("userInfo", data.user);
+        const userInfo = {
+          ...this.user,
+          ...data.user,
+        };
+        this.$store.commit("setUserInfo", userInfo);
+        Cookie.set("userInfo", userInfo);
         this.$router.push("/");
       } catch (err) {
         this.errors = err.response.data.errors;
@@ -99,5 +107,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>
