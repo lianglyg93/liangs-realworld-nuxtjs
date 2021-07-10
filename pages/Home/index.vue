@@ -2,8 +2,8 @@
   <div class="home-page">
     <div class="banner">
       <div class="container">
-        <h1 class="logo-font">conduit</h1>
-        <p>A place to share your knowledge.</p>
+        <h1 class="logo-font">conduit - lsTest</h1>
+        <p>A place to share your knowledge...</p>
       </div>
     </div>
 
@@ -18,8 +18,7 @@
                   :to="{ name: 'home', query: { tab: 'your' } }"
                   :class="{ active: tab === 'your' }"
                   exact
-                  >Your Feed</nuxt-link
-                >
+                >Your Feed</nuxt-link>
               </li>
               <li class="nav-item">
                 <nuxt-link
@@ -27,13 +26,10 @@
                   :to="{ name: 'home', query: { tab: 'global' } }"
                   :class="{ active: tab === 'global' }"
                   exact
-                  >Global Feed</nuxt-link
-                >
+                >Global Feed</nuxt-link>
               </li>
               <li class="nav-item" v-if="tag">
-                <span class="nav-link" :class="{ active: tag }" exact
-                  ># {{ tag }}</span
-                >
+                <span class="nav-link" :class="{ active: tag }" exact># {{ tag }}</span>
               </li>
             </ul>
           </div>
@@ -51,8 +47,7 @@
                 <nuxt-link
                   class="page-link"
                   :to="{ name: 'home', query: { page: pageIndex } }"
-                  >{{ pageIndex }}</nuxt-link
-                >
+                >{{ pageIndex }}</nuxt-link>
               </li>
             </ul>
           </nav>
@@ -68,8 +63,7 @@
                 :key="tagItem + index"
                 class="tag-pill tag-default"
                 :to="{ name: 'home', query: { tag: tagItem, tab: 'tag' } }"
-                >{{ tagItem }}</nuxt-link
-              >
+              >{{ tagItem }}</nuxt-link>
             </div>
           </div>
         </div>
