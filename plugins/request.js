@@ -21,13 +21,18 @@ export default ({ store, redirect }) => {
   );
   request.interceptors.response.use(
     function(response) {
+      console.log(response);
       // Do something with response data
       return response;
     },
     function(errMsg) {
-      console.log("errMsg", errMsg);
-      redirect("/sorry");
-      return Promise.reject(400, errMsg);
+      const { response } = errMsg;
+      if (errMsg.response.status === 401) {
+        redirect("/login");
+        return;
+      }
+      // redirect("/sorry");
+      return Promise.reject(errMsg.response?.status, errMsg);
     }
   );
 };
