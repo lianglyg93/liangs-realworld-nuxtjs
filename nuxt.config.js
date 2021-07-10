@@ -2,7 +2,7 @@
  * @Author: liangs
  * @Date: 2021-07-02 18:25:13
  * @LastEditors: liangs
- * @LastEditTime: 2021-07-10 18:28:56
+ * @LastEditTime: 2021-07-10 23:51:53
  * @Description: file content
  */
 export default {
@@ -66,9 +66,9 @@ export default {
     },
   },
   server: {
-    host: "0.0.0.0",
-    post: 9999,
-  },
+    port: 8000, // default: 3000
+    host: '0.0.0.0' // default: localhost,
+  }
   plugins: ["~/plugins/request.js", "~/plugins/filter.js"],
   loading: "~/components/loading.vue",
 };
