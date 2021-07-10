@@ -25,8 +25,9 @@ export default ({ store, redirect }) => {
       return response;
     },
     function(errMsg) {
+      console.log("errMsg", errMsg);
       redirect("/sorry");
-      return Promise.reject(400,errMsg);
+      return Promise.reject(400, errMsg);
     }
   );
 };

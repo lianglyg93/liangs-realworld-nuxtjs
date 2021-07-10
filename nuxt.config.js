@@ -2,7 +2,7 @@
  * @Author: liangs
  * @Date: 2021-07-02 18:25:13
  * @LastEditors: liangs
- * @LastEditTime: 2021-07-08 18:09:45
+ * @LastEditTime: 2021-07-10 18:28:56
  * @Description: file content
  */
 export default {
@@ -64,6 +64,10 @@ export default {
         ]
       );
     },
+  },
+  server: {
+    host: "0.0.0.0",
+    post: 9999,
   },
   plugins: ["~/plugins/request.js", "~/plugins/filter.js"],
   loading: "~/components/loading.vue",
